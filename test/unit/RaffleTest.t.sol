@@ -20,8 +20,9 @@ contract RaffleTest is Test {
     uint256 s_interval;
     address s_vrfCoordinator;
     bytes32 s_gasLane;
-    uint64 s_subscriptionId;
+    uint256 s_subscriptionId;
     uint32 s_callbackGasLimit;
+    address s_linkToken;
 
     function setUp() external {
         deployRaffle = new DeployRaffle();
@@ -32,7 +33,8 @@ contract RaffleTest is Test {
             s_vrfCoordinator,
             s_gasLane,
             s_subscriptionId,
-            s_callbackGasLimit
+            s_callbackGasLimit,
+            s_linkToken
         ) = helperConfig.activeNetworkConfig();
         vm.deal(PLAYER, STARTING_BALANCE);
     }
