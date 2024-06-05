@@ -21,7 +21,7 @@ contract HelperConfig is Script {
     NetworkConfiguration public activeNetworkConfig;
     uint96 private constant BASEFEE = 100000000000000000;
     uint96 private constant GASPRICELINK = 1000000000;
-    int256 private constant WEI_PER_UNIT_LINK = 1e9;
+    int256 private constant WEI_PER_UNIT_LINK = 1e18;
 
     constructor() {
         if (block.chainid == 1) {
@@ -89,7 +89,7 @@ contract HelperConfig is Script {
                 vrfCoordinator: address(vrfCoordinatorV2_5Mock),
                 gasLane: 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c,
                 subscriptionId: 0,
-                callbackGasLimit: 2500000,
+                callbackGasLimit: 500000000,
                 linkToken: address(linkToken)
             });
     }

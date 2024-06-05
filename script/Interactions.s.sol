@@ -43,7 +43,7 @@ contract CreateSubscription is Script {
 }
 
 contract FundSubscription is Script {
-    uint96 private constant FUND_AMOUNT = 1 ether;
+    uint96 private constant FUND_AMOUNT = 10 ether;
 
     function fundSubscriptiononfig() public {
         HelperConfig helperConfig = new HelperConfig();
