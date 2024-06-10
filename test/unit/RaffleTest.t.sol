@@ -37,7 +37,8 @@ contract RaffleTest is Test {
             s_gasLane,
             s_subscriptionId,
             s_callbackGasLimit,
-            s_linkToken
+            s_linkToken,
+
         ) = helperConfig.activeNetworkConfig();
         vm.deal(PLAYER, STARTING_BALANCE);
     }
@@ -50,6 +51,10 @@ contract RaffleTest is Test {
 
     function testRaffleOpenState() external view {
         assert(raffle.getRaffleState() == Raffle.RaffleState.OPEN);
+    }
+
+    function testLastTimestamp() external view {
+        assert(block.timestamp == raffle.getLastTimeStamp());
     }
 
     // testing Raffle Entrance:
@@ -217,11 +222,19 @@ contract RaffleTest is Test {
         //
     }
 
+    // modifier  to Skip some test Cases because on fork testing that doesn't support.
+    modifier skipTest() {
+        if (block.chainid != 31337) {
+            return;
+        }
+        _;
+    }
+
     //fullFill Random Words and then test
 
     function testFullFillRandomNumberRevertCanCalledAfterPerformUpKeep(
         uint256 randomRequestId
-    ) external enterPlayer {
+    ) external enterPlayer skipTest {
         //Arrange
         // Expect Revert
         vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
@@ -236,6 +249,7 @@ contract RaffleTest is Test {
     function testAfterWinnerPickingCheckForExpectedState()
         external
         enterPlayer
+        skipTest
     {
         //Arrange
         uint256 totalPlayers = 5;

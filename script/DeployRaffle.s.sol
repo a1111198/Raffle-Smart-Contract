@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.18;
 
-import {Script} from "forge-std/Script.sol";
+import {Script, console} from "forge-std/Script.sol";
 import {Raffle} from "../src/Raffle.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
@@ -10,6 +10,7 @@ import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.
 contract DeployRaffle is Script {
     function run() external returns (Raffle raffle, HelperConfig helperConfig) {
         helperConfig = new HelperConfig();
+
         (
             uint256 entranceFess,
             uint256 interval,
@@ -17,21 +18,33 @@ contract DeployRaffle is Script {
             bytes32 gasLane,
             uint256 subscriptionId,
             uint32 callbackGasLimit,
-            address linkToken
+            address linkToken,
+            uint256 deployerKey
         ) = helperConfig.activeNetworkConfig();
+
+        console.log("VRF", vrfCoordinator);
         if (subscriptionId == 0) {
             // Create our Subscription
             CreateSubscription createSubscription = new CreateSubscription();
             subscriptionId = createSubscription.createSubscription(
-                vrfCoordinator
+                vrfCoordinator,
+                deployerKey
             );
             // Fund our Subscription
 
             FundSubscription fundSubscription = new FundSubscription();
+            console.log(
+                "HERE IN DEPLOY SCRIPT VRF Coordinator",
+                vrfCoordinator
+            );
+            console.log("HERE IN DEPLOY SCRIPT VRF SID", subscriptionId);
+            console.log("HERE IN DEPLOY SCRIPT linkToken", linkToken);
+            console.log("HERE IN DEPLOY SCRIPT Deeploy key", deployerKey);
             fundSubscription.fundSubscription(
                 vrfCoordinator,
                 subscriptionId,
-                linkToken
+                linkToken,
+                deployerKey
             );
         }
         //Deploy Contract
@@ -47,10 +60,12 @@ contract DeployRaffle is Script {
         vm.stopBroadcast();
         // Add consumer:
         AddConsumer addConsumer = new AddConsumer();
+        address raffleAddress = address(raffle);
         addConsumer.addConsumer(
             vrfCoordinator,
             subscriptionId,
-            address(raffle)
+            raffleAddress,
+            deployerKey
         );
 
         return (raffle, helperConfig);

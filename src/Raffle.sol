@@ -118,17 +118,15 @@ contract Raffle is VRFConsumerBaseV2Plus {
         emit PlayerEntered(msg.sender);
     }
 
-    //1. get a Random Number less than array length;
-    //2. Pick a player from that Index
-    //3. Call this Function automatically
-
-    //@dev this is a function that chainLink automation nodes Call:
-    // it checks for the follwing:
-    // 1. Time greater than interval time must be passed.
-    // 2. Raffle must be in open State
-    // 3. contract must have an ETH balance to transfer;
-    // 4. there must be players in the Raffle;
-
+    /**
+     * @dev This is the function that the Chainlink Keeper nodes call
+     * they look for `upkeepNeeded` to return True.
+     * the following should be true for this to return true:
+     * 1. The time interval has passed between raffle runs.
+     * 2. The lottery is open.
+     * 3. The contract has ETH.
+     * 4. Implicity, your subscription is funded with LINK.
+     */
     function checkUpKeep(
         bytes memory /*checkData*/
     ) public view returns (bool updateNeeded, bytes memory /* performData */) {
